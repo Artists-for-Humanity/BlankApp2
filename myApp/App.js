@@ -8,24 +8,16 @@ import NewNote from './src/NewNotes';
 
 const Stack = createStackNavigator();
 
-export default function App() {
+const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen 
-        name="Home" 
-        component={Home}
-        options={{headerShown:false}}
-        />
-          <Stack.Screen 
-        name="NewNote" 
-        component={NewNote}
-        options={{headerShown:false}}
-        />
+        <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+        <Stack.Screen name="NewNote" component={NewNote} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -107,5 +99,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 5,
     backgroundColor: '#75AED2',
-  }
+  },
 });
+
+export default App;
