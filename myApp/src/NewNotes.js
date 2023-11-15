@@ -9,6 +9,14 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import {
+  Menu,
+  MenuOption,
+  MenuOptions,
+  MenuProvider,
+  MenuTrigger,
+} from "react-native-popup-menu";
+
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
@@ -70,6 +78,10 @@ const NewNote = () => {
     // Optionally, it can navigate to another screen or perform other actions here
   };
 
+  const menuIcon = (
+    <FontAwesomeIcon icon={faEllipsisVertical} style={styles.shareIcon} size={26} />
+  );
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={{ flex: 1 }}>
@@ -103,6 +115,7 @@ const NewNote = () => {
           <TouchableOpacity>
             <FontAwesomeIcon icon={faEllipsisVertical} style={styles.shareIcon} size={26} />
           </TouchableOpacity>
+
         </View>
         <View style={{ flex: 1 }}>
           <TextInput
@@ -155,6 +168,40 @@ const NewNote = () => {
             </TouchableOpacity>
           </View>
         </View>
+        <MenuProvider>
+            <Menu>
+              <MenuTrigger>{menuIcon}</MenuTrigger>
+              <MenuOptions
+                customStyles={{
+                  optionsContainer: {
+                    position: 'absolute',
+                    top: 50,
+                    left: -100,
+                    borderRadius: 10,
+                  },
+                }}
+              >
+                <MenuOption
+                  onSelect={() => {
+                    // Handle "Lock / Unlock" action
+                  }}
+                  text="Lock / Unlock"
+                />
+                <MenuOption
+                  onSelect={() => {
+                    // Handle "Move Note" action
+                  }}
+                  text="Move Note"
+                />
+                <MenuOption
+                  onSelect={() => {
+                    // Handle "Delete" action
+                  }}
+                  text="Delete"
+                />
+              </MenuOptions>
+            </Menu>
+          </MenuProvider>
       </View>
     </KeyboardAvoidingView>
   );
