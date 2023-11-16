@@ -43,13 +43,18 @@ const NewNote = () => {
   const [isBodyFocused, setIsBodyFocused] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
 
+  const [titleContainerHeight, setTitleContainerHeight] = useState(60);
+
   const handleTitleChange = (text) => {
     // Limit the input text to 75 characters
     if (text.length <= 75) {
       setTitleInput(text);
+  
+      // Adjust the container height dynamically based on the title input content
+      const dynamicHeight = text.split('\n').length * 20; // Adjust as needed
+      setTitleContainerHeight(Math.max(90, dynamicHeight));
     }
   };
-
   const handleBodyChange = (text) => {
     setBodyInput(text);
   };
@@ -82,126 +87,135 @@ const NewNote = () => {
     <FontAwesomeIcon icon={faEllipsisVertical} style={styles.shareIcon} size={26} />
   );
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={{ flex: 1 }}>
-        <View style={styles.navContainer}>
+      <View style={{ flex: 1, flexDirection: 'column'}}>
+      <View style={styles.navContainer}>
           <TouchableOpacity style={styles.buttonContainer} onPress={navigateToHome}>
             <FontAwesomeIcon icon={faHome} style={styles.homeIcon} />
             <Text style={styles.buttonText}>Main</Text>
           </TouchableOpacity>
           <View style={styles.colorBar}></View>
         </View>
-        <View style={styles.topContainer}>
-          <TextInput
-            multiline
-            placeholder="Title"
-            style={styles.titleBox}
-            onChangeText={handleTitleChange}
-            value={TitleInput}
-            underlineColorAndroid="transparent"
-            placeholderTextColor="#B6B6B6"
-            maxLength={75}
-          />
-          <TouchableOpacity onPress={starIconPress}>
-            <View style={styles.starIconContainer}>
-              {isPressed ? (
-                <FontAwesomeIcon icon={faSolidStar} style={styles.starIconSolid} size={30} />
-              ) : (
-                <FontAwesomeIcon icon={faRegularStar} style={styles.starIconOutline} size={30} />
-              )}
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <FontAwesomeIcon icon={faEllipsisVertical} style={styles.shareIcon} size={26} />
-          </TouchableOpacity>
-
-        </View>
-        <View style={{ flex: 1 }}>
-          <TextInput
-            multiline
-            placeholder="What's on your mind?"
-            style={[
-              styles.bodyContainer,
-              isBodyFocused && BodyInput ? styles.focusedInput : styles.blurredInput,
-              // Conditionally apply text color based on user input
-              BodyInput ? { color: 'white' } : null,
-            ]}
-            onChangeText={handleBodyChange}
-            value={BodyInput}
-            underlineColorAndroid="transparent"
-            placeholderTextColor="#B6B6B6"
-            onFocus={handleBodyFocus}
-            onBlur={handleBodyBlur}
-          />
-        </View>
-        {/* Sticky Action Menu */}
-        <View style={styles.stickyMenu}>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>Submit</Text>
-          </TouchableOpacity>
-          <View style={styles.actionMenu}>
-            <TouchableOpacity>
-              <View style={styles.actionButton}>
-                <FontAwesomeIcon icon={faImage} size={25} color="white" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.actionButton}>
-                <FontAwesomeIcon icon={faPaperclip} size={25} color="white" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.actionButton}>
-                <Text style={styles.actionText}>Tt</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.actionButton}>
-                <FontAwesomeIcon icon={faListCheck} size={25} color="white" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.actionButton}>
-                <FontAwesomeIcon icon={faPenToSquare} size={25} color="white" />
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <MenuProvider>
+          {/* <TextInput
+              multiline
+              placeholder="Title"
+              style={[
+                styles.titleBox,
+                { height: titleContainerHeight }, // Set the dynamic height
+              ]}
+              onChangeText={handleTitleChange}
+              value={TitleInput}
+              underlineColorAndroid="transparent"
+              placeholderTextColor="#B6B6B6"
+              maxLength={75}
+            /> */}
+        <View style={{ position: 'relative', flexDirection: 'column', justifyContent: 'flex-end' }}>
+          <View style={{flexDirection: 'column'}}>
+          <MenuProvider>
             <Menu>
-              <MenuTrigger>{menuIcon}</MenuTrigger>
-              <MenuOptions
+              <MenuTrigger onPress={() => setIsMenuOpen(!isMenuOpen)}>
+                {menuIcon}
+              </MenuTrigger>
+              <MenuOptions 
                 customStyles={{
                   optionsContainer: {
-                    position: 'absolute',
-                    top: 50,
-                    left: -100,
+                    flexDirection: 'column',
+                    alignSelf: 'flex-end',
+                    marginTop: 50, // Adjust this value as needed
+                    marginRight: 10, // Adjust this value as needed
                     borderRadius: 10,
+                    backgroundColor: 'white',
+                    opacity: 0.9,
+                    fontSize: 12,
                   },
                 }}
               >
-                <MenuOption
-                  onSelect={() => {
-                    // Handle "Lock / Unlock" action
-                  }}
+              <MenuOption
+                onSelect={() => {
+                  // Handle "Lock / Unlock" action
+                }}
                   text="Lock / Unlock"
-                />
-                <MenuOption
-                  onSelect={() => {
-                    // Handle "Move Note" action
-                  }}
-                  text="Move Note"
-                />
-                <MenuOption
-                  onSelect={() => {
-                    // Handle "Delete" action
-                  }}
-                  text="Delete"
-                />
-              </MenuOptions>
-            </Menu>
-          </MenuProvider>
+              />
+              <MenuOption
+                onSelect={() => {
+                  // Handle "Move Note" action
+                }}
+                text="Move Note"
+              />
+              <MenuOption
+                onSelect={() => {
+                  // Handle "Delete" action
+                }}
+                text="Delete"
+              />
+            </MenuOptions>
+          </Menu>
+        </MenuProvider>
+        <TouchableOpacity onPress={starIconPress} style={{ zIndex: 1 }}>
+          <View style={styles.starIconContainer}>
+            {isPressed ? (
+              <FontAwesomeIcon icon={faSolidStar} style={styles.starIconSolid} size={30} />
+            ) : (
+              <FontAwesomeIcon icon={faRegularStar} style={styles.starIconOutline} size={30} />
+            )}
+          </View>
+        </TouchableOpacity>
+        </View>
+      <View style={{ zIndex: 3 }}>
+        <TextInput
+          multiline
+          placeholder="What's on your mind?"
+          style={[
+            styles.bodyContainer,
+            isBodyFocused && BodyInput ? styles.focusedInput : styles.blurredInput,
+            // Conditionally apply text color based on user input
+            BodyInput ? { color: 'white' } : null,
+          ]}
+          onChangeText={handleBodyChange}
+          value={BodyInput}
+          underlineColorAndroid="transparent"
+          placeholderTextColor="#B6B6B6"
+          onFocus={handleBodyFocus}
+          onBlur={handleBodyBlur}
+        />
+      </View>
+      </View>
+          {/* Sticky Action Menu */}
+          <View style={styles.stickyMenu}>
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
+            <View style={styles.actionMenu}>
+              <TouchableOpacity>
+                <View style={styles.actionButton}>
+                  <FontAwesomeIcon icon={faImage} size={25} color="white" />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View style={styles.actionButton}>
+                  <FontAwesomeIcon icon={faPaperclip} size={25} color="white" />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View style={styles.actionButton}>
+                  <Text style={styles.actionText}>Tt</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View style={styles.actionButton}>
+                  <FontAwesomeIcon icon={faListCheck} size={25} color="white" />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View style={styles.actionButton}>
+                  <FontAwesomeIcon icon={faPenToSquare} size={25} color="white" />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -251,20 +265,20 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
   },
-  topContainer: {
-    width: 375,
-    marginTop: 15,
-    flexDirection: 'row',
-    alignContent: 'flex-start',
-  },
-  titleBox: {
-    width: 275,
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginLeft: 37,
-  },
+  // topContainer: {
+  //   marginBottom: 15,
+  //   flexDirection: 'row',
+  // },
+  // titleBox: {
+  //   width: 275,
+  //   fontSize: 24,
+  //   fontWeight: 'bold',
+  //   color: '#FFFFFF',
+  //   marginLeft: 37,
+  // },
   starIconContainer: {
+    position: 'absolute',
+    right: 30,
     flexDirection: 'row',
   },
   starIconOutline: {
@@ -280,13 +294,17 @@ const styles = StyleSheet.create({
     color: '#EACD68', // Solid star color
   },
   shareIcon: {
+    position: 'absolute',
+    right: 5,
     marginVertical: 5,
     color: 'white',
   },
   bodyContainer: {
-    flex: 1,
-    marginLeft: 37,
-    marginRight: 3,
+    position: 'absolute',
+    width: 320,
+    top: 35,
+    marginLeft: 35,
+    marginRight: 5,
     marginBottom: 125,
     fontSize: 20,
   },
